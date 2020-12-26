@@ -216,28 +216,31 @@ fi
 
 download_supersu() {
 
-echo "Downloading SuperSU-v2.82-SR3"
+echo "Downloading SuperSU"
 mkdir -p /tmp/aroc
 cd /tmp/aroc
-curl https://download.chainfire.eu/1122/SuperSU/SR3-SuperSU-v2.82-SR3-20170813133244.zip?retrieve_file=1 -o SuperSU.zip
+
+supersu_url=https://supersuroot.org/downloads/SuperSU-v2.82-201705271822.zip
+curl $supersu_url -o SuperSU.zip
 
 # Check filesize
 
 supersu_size=$(stat -c %s /tmp/aroc/SuperSU.zip)
+expected_supersu_size=5903921
 
-if [ $supersu_size = 6918737 ]; then
+if [ $supersu_size = $expected_supersu_size ]; then
   echo "Unzipping SuperSU zip, and copying required directories to ~/Downloads."
   /usr/local/bin/busybox unzip SuperSU.zip
   else
   echo "Unexpected file size. Trying again..."
-  curl https://download.chainfire.eu/1122/SuperSU/SR3-SuperSU-v2.82-SR3-20170813133244.zip?retrieve_file=1 -o SuperSU.zip
+  curl $supersu_url -o SuperSU.zip
 fi
 
 # Check filesize again...
 
 supersu_size=$(stat -c %s /tmp/aroc/SuperSU.zip)
 
-if [ $supersu_size = 6918737 ]; then
+if [ $supersu_size = $expected_supersu_size ]; then
   echo "Unzipping SuperSU zip, and copying required directories to ~/Downloads."
   /usr/local/bin/busybox unzip SuperSU.zip
   else
@@ -708,20 +711,20 @@ echo
 
 # Copy SuperSU files to $system
     
-echo "Creating SuperSU directory in system/priv-app, copying SuperSU apk, and setting its permissions and contexts"
+echo "Creating Superuser directory in system/priv-app, copying Superuser apk, and setting its permissions and contexts"
 
 cd $system/priv-app
-  mkdir -p $system/priv-app/SuperSU
-  chown 655360 $system/priv-app/SuperSU
-  chgrp 655360 $system/priv-app/SuperSU
+  mkdir -p $system/priv-app/Superuser
+  chown 655360 $system/priv-app/Superuser
+  chgrp 655360 $system/priv-app/Superuser
   
-cd $system/priv-app/SuperSU
-  cp $common/Superuser.apk $system/priv-app/SuperSU/SuperSU.apk
+cd $system/priv-app/Superuser
+  cp $common/Superuser.apk $system/priv-app/Superuser/Superuser.apk
 
-  chmod 0644 $system/priv-app/SuperSU/SuperSU.apk
-  chcon u:object_r:system_file:s0 $system/priv-app/SuperSU/SuperSU.apk
-  chown 655360 $system/priv-app/SuperSU/SuperSU.apk
-  chgrp 655360 $system/priv-app/SuperSU/SuperSU.apk
+  chmod 0644 $system/priv-app/Superuser/Superuser.apk
+  chcon u:object_r:system_file:s0 $system/priv-app/Superuser/Superuser.apk
+  chown 655360 $system/priv-app/Superuser/Superuser.apk
+  chgrp 655360 $system/priv-app/Superuser/Superuser.apk
 
 sleep 0.1
 

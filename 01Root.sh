@@ -40,7 +40,7 @@ rm /etc/aroc_writable_test
 }
 
 modify_cros_files() {
-  
+
 # Just changing two environment variables for Android here.
 # In CrOS v70, the writeable container and debug flags have moved (again); they are now in "/usr/share/arc-setup/config.json"
 # (Older versions of CrOS have/had Android envs in arc-setup-env).
@@ -68,24 +68,24 @@ fi
 
 if [ -e /etc/init/arc-setup-env ]; then
   echo "Copying /etc/init/arc-setup-env to /usr/local/Backup"
-  
+
   sleep 1
 
   echo "Setting 'export WRITABLE_MOUNT=1', 'export ANDROID_DEBUGGABLE=1' and (if variable exists) 'export SHARE_FONTS=0' in /etc/init/arc-setup-env"
-  
+
   sed -i 's/export WRITABLE_MOUNT=0/export WRITABLE_MOUNT=1/g' /etc/init/arc-setup-env 2>/dev/null
   sed -i 's/export ANDROID_DEBUGGABLE=0/export ANDROID_DEBUGGABLE=1/g' /etc/init/arc-setup-env 2>/dev/null
-  
+
 # NOTE The below line (disabling shared fonts) is no longer needed as of recent CrOS versions.
 
   sed -i 's/export SHARE_FONTS=1/export SHARE_FONTS=0/g' /etc/init/arc-setup-env 2>/dev/null
-  
+
  fi
- 
+
  # In CrOS circa v55-60, we had to change the .confs directly:
- 
+
  if [ ! -e /usr/share/arc-setup/config.json ] && [ ! -e /etc/init/arc-setup-env ]; then
- 
+
   echo "Copying /etc/init/arc-setup.conf and /etc/init/arc-system-mount.conf to /usr/local/Backup"
   sleep 0.2
   echo "Setting 'env WRITABLE_MOUNT=1' in /etc/init/arc-setup.conf and/or /etc/init/arc-system-mount.conf"
@@ -95,7 +95,7 @@ if [ -e /etc/init/arc-setup-env ]; then
 
   cp -a /etc/init/arc-setup.conf /usr/local/Backup/arc-setup.conf.old
   cp -a /etc/init/arc-setup.conf /etc/init/arc-setup.conf.old
-  
+
   sed -i 's/env WRITABLE_MOUNT=0/env WRITABLE_MOUNT=1/g' /etc/init/arc-setup.conf
   sed -i 's/env WRITABLE_MOUNT=0/env WRITABLE_MOUNT=1/g' /etc/init/arc-system-mount.conf
 
@@ -107,7 +107,7 @@ fi
 }
 
 detect_architecture() {
-  
+
 # TODO: Test/improve this function
 
 #if [ -z "$ANDROID_ARCH" ]; then
@@ -177,7 +177,7 @@ fallocate -d /usr/local/Android_Images/system.raw.expanded.img
 }
 
 download_busybox () {
-  
+
 # Since there doesn't appear to be a built-in zip uncompresser available on the command line, if we need to download SuperSU,
 # we download BusyBox in order to unzip it. We could also install BusyBox in Android w/ its symlinks later, if we want.
 
@@ -189,7 +189,7 @@ if [ ! -e /usr/local/bin/busybox ]; then
   if [ $ANDROID_ARCH=armv7 ]; then
    curl https://busybox.net/downloads/binaries/1.31.0-defconfig-multiarch-musl/busybox-armv7l -o busybox
   else
-  
+
    if [ ANDROID_ARCH=x86 ]; then
 
 # Commenting out the x64 Intel version for now as most x64 systems still seem to use a 32 bit Android container.
@@ -204,7 +204,7 @@ if [ ! -e /usr/local/bin/busybox ]; then
      exit 1
      echo
     fi
-  
+
   fi
 
   echo "Moving BusyBox to /usr/local/bin"
@@ -235,7 +235,7 @@ if [ $supersu_size = $expected_supersu_size ]; then
   else
   echo "Unexpected file size. Trying again..."
   curl $supersu_url -o SuperSU.zip
-  
+
   # Check filesize again...
 
   supersu_size=$(stat -c %s /tmp/aroc/SuperSU.zip)
@@ -270,10 +270,10 @@ fi
 }
 
 # The following two functions simply copy the architecture-dependent su binary to /system.
-# For arm Chromebooks we need /armv7/su, but for Intel Chromebooks we need /x86/su.pie 
+# For arm Chromebooks we need /armv7/su, but for Intel Chromebooks we need /x86/su.pie
 
 copy_su_armv7() {
-  
+
 echo "Copying su to system/xbin/su,daemonsu,sugote, and setting permissions and contexts"
 
 cd $system/xbin
@@ -285,11 +285,11 @@ cd $system/xbin
   chmod 0755 $system/xbin/su
   chmod 0755 $system/xbin/daemonsu
   chmod 0755 $system/xbin/sugote
-  
+
   chown 655360 $system/xbin/su
   chown 655360 $system/xbin/daemonsu
   chown 655360 $system/xbin/sugote
-  
+
   chgrp 655360 $system/xbin/su
   chgrp 655360 $system/xbin/daemonsu
   chgrp 655360 $system/xbin/sugote
@@ -333,11 +333,11 @@ cd $system/xbin
   chmod 0755 $system/xbin/su
   chmod 0755 $system/xbin/daemonsu
   chmod 0755 $system/xbin/sugote
-  
+
   chown 655360 $system/xbin/su
   chown 655360 $system/xbin/daemonsu
   chown 655360 $system/xbin/sugote
-  
+
   chgrp 655360 $system/xbin/su
   chgrp 655360 $system/xbin/daemonsu
   chgrp 655360 $system/xbin/sugote
@@ -386,7 +386,7 @@ sleep 0.1
 echo
 
 echo "Be aware that modifying the system partition could cause automatic updates to fail (unlikely), may result in having to powerwash or restore from USB potentially causing loss of data! Please make sure important files are backed up."
-echo 
+echo
 
 # Remount the Chrome OS root drive as writeable
 
@@ -408,7 +408,7 @@ if [ -L /opt/google/containers/android/system.raw.img ]; then
 # If the file is already a symlink, we need to check if a backup of the original system.raw.img exists
 
   if [ ! -f /home/chronos/user/Downloads/system.raw.img ]; then
-  
+
     if [ ! -f /opt/google/containers/android/system.raw.img.bk ]; then
       echo
       echo "Error!"
@@ -416,13 +416,13 @@ if [ -L /opt/google/containers/android/system.raw.img ]; then
       echo
       exit 1
     fi
-      
+
   fi
-  
+
   echo "Removing symlink"
   rm -rf /opt/google/containers/android/system.raw.img
 fi
-  
+
 if [ ! -e /opt/google/containers/android/system.raw.img ]; then
 
   if [ -f /opt/google/containers/android/system.raw.img.bk ]; then
@@ -459,14 +459,14 @@ create_image
 echo "Mounting system.raw.expanded.img"
 
 if [ -e /opt/google/containers/android/system.raw.img ]; then
-    
+
   if [ -L /opt/google/containers/android/system.raw.img ]; then
-    
+
     if [ -e /opt/google/containers/android/system.raw.img.bk ]; then
       umount -l /usr/local/Android_Images/Original 2>/dev/null
       mount -o loop,rw,sync /opt/google/containers/android/system.raw.img.bk /usr/local/Android_Images/Original 2>/dev/null
     else
-  
+
       if [ -e /home/chronos/user/Downloads/system.raw.img ]; then
         umount -l /usr/local/Android_Images/Original 2>/dev/null
         mount -o loop,rw,sync /home/chronos/user/Downloads/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
@@ -477,25 +477,25 @@ if [ -e /opt/google/containers/android/system.raw.img ]; then
         echo
         exit 1
       fi
-        
+
     fi
-    
+
   fi
-    
+
 fi
-  
+
 if [ ! -L /opt/google/containers/android/system.raw.img ]; then
 
   if [ -e /opt/google/containers/android/system.raw.img ]; then
     umount -l /usr/local/Android_Images/Original 2>/dev/null
     mount -o loop,rw,sync /opt/google/containers/android/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
   else
-  
+
     if [ -e /opt/google/containers/android/system.raw.img.bk ]; then
       umount -l /usr/local/Android_Images/Original 2>/dev/null
       mount -o loop,rw,sync /opt/google/containers/android/system.raw.img.bk /usr/local/Android_Images/Original 2>/dev/null
     else
-      
+
       if [ -e /home/chronos/user/Downloads/system.raw.img ]; then
         echo "Mounting /home/chronos/user/Downloads/system.raw.img and copying files"
         umount -l /usr/local/Android_Images/Original 2>/dev/null
@@ -507,11 +507,11 @@ if [ ! -L /opt/google/containers/android/system.raw.img ]; then
         echo
         exit 1
       fi
-      
+
     fi
-      
+
   fi
-    
+
 fi
         #ORIGINAL_ANDROID_ROOTFS=/opt/google/containers/android/rootfs/root
         ANDROID_ROOTFS=/usr/local/Android_Images/Original
@@ -543,7 +543,7 @@ echo "Copying Android system files"
 
 # We should be able to copy files/dirs in 'Enforcing' mode by mounting with -o fscontext.
 # Directories mounted with special contexts:
-    
+
           #u:object_r:cgroup:s0 acct
           #u:object_r:device:s0 dev
           #u:object_r:tmpfs:s0 mnt
@@ -607,12 +607,12 @@ umount -l /usr/local/Android_Images/system.raw.expanded.img 2>/dev/null
 # plus it takes up too much space, especially since the Nougat filesize increase.
 
 # if [ -e /opt/google/containers/android/system.raw.img ]; then
-  
+
 #  if [ ! -L /opt/google/containers/android/system.raw.img ]; then
 #    echo "Copying original rootfs image to /home/chronos/user/Downloads/system.raw.img as a backup."
 #    cp -a /opt/google/containers/android/system.raw.img /home/chronos/user/Downloads/system.raw.img
 #  fi
- 
+
 #fi
 
 # If the original rootfs exists, before replacing it with a symlink, make a backup.
@@ -624,20 +624,20 @@ if [ -e /opt/google/containers/android/system.raw.img ]; then
   if [ ! -L /opt/google/containers/android/system.raw.img ]; then
     echo "Moving original rootfs image to /opt/google/containers/android/system.raw.img.bk"
     mv /opt/google/containers/android/system.raw.img  /opt/google/containers/android/system.raw.img.bk
-    
+
 # Make the symlink from the original pathname to our writeable rootfs image
 
     echo "Creating symlink to /usr/local/Android_Images/system.raw.expanded.img"
     ln  -s /usr/local/Android_Images/system.raw.expanded.img /opt/google/containers/android/system.raw.img
   fi
-  
+
   else
-  
+
   if [ -e /usr/local/Android_Images/system.raw.expanded.img ]; then
     echo "Creating symlink to /usr/local/Android_Images/system.raw.expanded.img"
     ln  -s /usr/local/Android_Images/system.raw.expanded.img /opt/google/containers/android/system.raw.img
   fi
-  
+
 fi
 # Check if the SuperSU 'common directory' is already present in ~/Downloads. If not, we will try to download it (and unzip it with BusyBox).
 
@@ -645,11 +645,11 @@ if [ ! -e /home/chronos/user/Downloads/common ]; then
   echo "SuperSU files not found in ~/Downloads! Attempting to download BusyBox and SuperSU now..."
   mkdir -p /tmp/aroc
   cd /tmp/aroc
-  
+
   download_busybox
-  
+
   download_supersu
-  
+
 fi
 
 sleep 0.1
@@ -679,7 +679,7 @@ esac
 
 if [ ! -e $SU_ARCHDIR ]; then
   download_busybox
-  
+
   download_supersu
 fi
               common=/home/chronos/user/Downloads/common
@@ -709,14 +709,14 @@ sleep 0.1
 echo
 
 # Copy SuperSU files to $system
-    
+
 echo "Creating Superuser directory in system/priv-app, copying Superuser apk, and setting its permissions and contexts"
 
 cd $system/priv-app
   mkdir -p $system/priv-app/Superuser
   chown 655360 $system/priv-app/Superuser
   chgrp 655360 $system/priv-app/Superuser
-  
+
 cd $system/priv-app/Superuser
   cp $common/Superuser.apk $system/priv-app/Superuser/Superuser.apk
 
@@ -760,7 +760,7 @@ cd $system/lib
   chown 655360 $system/lib/libsupol.so
   chgrp 655360 $system/lib/libsupol.so
   chcon u:object_r:system_file:s0 $system/lib/libsupol.so
-  
+
 sleep 0.1
 
 echo "Copying sh from system/bin/sh to system/xbin/sugote-mksh and setting permissions and contexts"
@@ -773,10 +773,10 @@ cd $system/xbin
 
   chmod 0755 $system/xbin/sugote-mksh
   chcon u:object_r:system_file:s0 $system/xbin/sugote-mksh
-  
+
 # Hijacking app_process (below) worked on Marshmallow. Does not aooear to work on N.
 # One approach that does work on Nougat: modifying init.*.rc instead.
-  
+
 #echo "Moving app_process32"
 
 #cd $system/bin/
@@ -818,7 +818,7 @@ cd $system/etc
   chcon u:object_r:system_file:s0  $system/etc/.installed_su_daemon
 
   cp $common/install-recovery.sh  $system/etc/install-recovery.sh
-  
+
   chmod 0755  $system/etc/install-recovery.sh
   chown 655360 $system/etc/install-recovery.sh
   chgrp 655360 $system/etc/install-recovery.sh
@@ -827,11 +827,11 @@ cd $system/etc
 echo "Symlinking system/bin/install-recovery.sh to system/etc/install-recovery.sh"
 
   ln -s -r install-recovery.sh ../bin/install-recovery.sh
-  
+
 echo "Adding system/bin/daemonsu-service.sh"
 
 cp $common/install-recovery.sh  $system/bin/daemonsu-service.sh
-  
+
 chmod 0755  $system/bin/daemonsu-service.sh
 chown 655360 $system/bin/daemonsu-service.sh
 chgrp 657360 $system/bin/daemonsu-service.sh
@@ -853,7 +853,7 @@ echo "service daemonsu /system/bin/daemonsu-service.sh service
     user root
     seclabel u:r:supersu:s0
     oneshot" >>  $system/../init.super.rc
-    
+
 echo "Adding 'import /init.super.rc' to existing init.rc"
 
 sed -i '7iimport /init.super.rc' $system/../init.rc

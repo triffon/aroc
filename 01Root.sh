@@ -122,6 +122,7 @@ arm*) ANDROID_ARCH="armv7";;
 *) error 2 "Invalid architecture '$ARCH'.";;
 esac
 
+echo "Detected architecture $ARCH, using Android architecture $ANDROID_ARCH"
 }
 
 create_image() {
@@ -234,38 +235,36 @@ if [ $supersu_size = $expected_supersu_size ]; then
   else
   echo "Unexpected file size. Trying again..."
   curl $supersu_url -o SuperSU.zip
-fi
+  
+  # Check filesize again...
 
-# Check filesize again...
+  supersu_size=$(stat -c %s /tmp/aroc/SuperSU.zip)
 
-supersu_size=$(stat -c %s /tmp/aroc/SuperSU.zip)
-
-if [ $supersu_size = $expected_supersu_size ]; then
-  echo "Unzipping SuperSU zip, and copying required directories to ~/Downloads."
-  /usr/local/bin/busybox unzip SuperSU.zip
+  if [ $supersu_size = $expected_supersu_size ]; then
+      echo "Unzipping SuperSU zip, and copying required directories to ~/Downloads."
+      /usr/local/bin/busybox unzip SuperSU.zip
   else
-  echo "Unexpected file size again! You can manually download the SuperSU zip and extract its directories to ~/Downloads. Then run this script again."
-  exit 1
+      echo "Unexpected file size again! You can manually download the SuperSU zip and extract its directories to ~/Downloads. Then run this script again."
+      exit 1
+  fi
 fi
 
 # Copy the required files over to ~/Downloads
 
 cp -r -a common /home/chronos/user/Downloads
-  
-if [ $ANDROID_ARCH=armv7 ]; then
-  cp -r -a armv7 /home/chronos/user/Downloads
-  else
-    
-  if [ $ANDROID_ARCH=x86 ]; then
+
+echo "Reminder: ANDROID_ARCH=$ANDROID_ARCH"
+
+if [ $ANDROID_ARCH = armv7 ]; then
+    cp -r -a armv7 /home/chronos/user/Downloads
+elif [ $ANDROID_ARCH = x86 ]; then
     cp -r -a x86 /home/chronos/user/Downloads
-    else
+else
     echo "Error!"
     echo "Unable to detect correct architecture!"
     echo
     exit 1
     echo
-  fi
-  
 fi
 
 }
@@ -864,7 +863,7 @@ sed -i '7iimport /init.super.rc' $system/../init.rc
 echo "Substituting '|mount rootfs rootfs / remount bind rw' for '|mount rootfs rootfs / remount bind ro' in existing init.rc"
 echo "A backup of init.rc will be stored as init.rc.old"
 
-sed -i.old 's|mount rootfs rootfs / remount bind ro|mount rootfs rootfs / remount bind rw|g' $arc_system/../init.rc
+sed -i.old 's|mount rootfs rootfs / remount bind ro|mount rootfs rootfs / remount bind rw|g' $system/../init.rc
 
 # SuperSU copying script ends
 

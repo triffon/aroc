@@ -464,12 +464,12 @@ if [ -e /opt/google/containers/android/system.raw.img ]; then
 
     if [ -e /opt/google/containers/android/system.raw.img.bk ]; then
       umount -l /usr/local/Android_Images/Original 2>/dev/null
-      mount -o loop,rw,sync /opt/google/containers/android/system.raw.img.bk /usr/local/Android_Images/Original 2>/dev/null
+      mount -o loop,ro,sync /opt/google/containers/android/system.raw.img.bk /usr/local/Android_Images/Original 2>/dev/null
     else
 
       if [ -e /home/chronos/user/Downloads/system.raw.img ]; then
         umount -l /usr/local/Android_Images/Original 2>/dev/null
-        mount -o loop,rw,sync /home/chronos/user/Downloads/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
+        mount -o loop,ro,sync /home/chronos/user/Downloads/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
       else
         echo
         echo "Error!"
@@ -488,18 +488,18 @@ if [ ! -L /opt/google/containers/android/system.raw.img ]; then
 
   if [ -e /opt/google/containers/android/system.raw.img ]; then
     umount -l /usr/local/Android_Images/Original 2>/dev/null
-    mount -o loop,rw,sync /opt/google/containers/android/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
+    mount -o loop,ro,sync /opt/google/containers/android/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
   else
 
     if [ -e /opt/google/containers/android/system.raw.img.bk ]; then
       umount -l /usr/local/Android_Images/Original 2>/dev/null
-      mount -o loop,rw,sync /opt/google/containers/android/system.raw.img.bk /usr/local/Android_Images/Original 2>/dev/null
+      mount -o loop,ro,sync /opt/google/containers/android/system.raw.img.bk /usr/local/Android_Images/Original 2>/dev/null
     else
 
       if [ -e /home/chronos/user/Downloads/system.raw.img ]; then
         echo "Mounting /home/chronos/user/Downloads/system.raw.img and copying files"
         umount -l /usr/local/Android_Images/Original 2>/dev/null
-        mount -o loop,rw,sync /home/chronos/user/Downloads/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
+        mount -o loop,ro,sync /home/chronos/user/Downloads/system.raw.img /usr/local/Android_Images/Original 2>/dev/null
       else
         echo
         echo "Error!"
